@@ -1,0 +1,33 @@
+#main-banner {
+    background: blue;
+    padding: 1em;
+    text-align: center;
+}
+
+#main-container {
+    display: flex;
+}
+
+#left-container {
+    width: 35vw;
+}
+
+#right-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#search-container {
+    padding: 1em;
+    border: 1px solid red;
+}
+
+#current-weather {
+    padding: 1em;
+    border: 1px solid red;
+}
+
+#five-day-forcast {
+    padding: 1em;
+    border: 1px solid red;
+}
