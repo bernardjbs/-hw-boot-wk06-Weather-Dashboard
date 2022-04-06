@@ -3,6 +3,7 @@ const searchHistoriesEl = document.querySelector("#search-histories");
 const searchCityInput = document.querySelector("#search-city-input");
 const currentWeatherEl = document.querySelector("#current-weather");
 const forecastEl = document.querySelector("#forecast");
+const iconUrl = "https://openweathermap.org/img/wn";
 
 const APIkey = "ad132697fb09c0a3d0781a7f1977e112";
 let cityArr = [];
@@ -56,10 +57,8 @@ async function searchLocation(query) {
         }
         forecastArr.push(forecastObj);
     }
-
     // Fill and return the Weather object
     return {
-        // id: jsonWeatherData.id,
         city: jsonWeatherData.name,
         date: unixToDate(currentData.dt),
         currentTemp: currentData.temp,
@@ -72,11 +71,9 @@ async function searchLocation(query) {
 }
 
 function renderWeather(Weather) {
-    console.log(Weather);
-    const iconUrl = "https://openweathermap.org/img/wn";
-
+    currentWeatherEl.innerHTML = "";
+    forecastEl.innerHTML = "";
     const cityButton = document.createElement("Button");
-    // cityButton.setAttribute("id", `${Weather.id}`);
     if (cityArr.includes(Weather.city)) {
         return;
     }
@@ -88,40 +85,9 @@ function renderWeather(Weather) {
     cityArr = [... new Set(cityArr)];
     searchCityInput.value = "";
 
-    //Render weather for the current city in the #current-weather section
-    let cwH2 = document.createElement("h2")
-    let cwIcon = document.createElement("img");
-    let cwUl = document.createElement("ul"); //Create ul for current weather
-    let cwLiTemp = document.createElement("li"); // Create li for current weather temperature
-    let cwLiWind = document.createElement("li"); // Create li for current weather wind speed
-    let cwLiHumidity = document.createElement("li"); // Create li for current weather humidity
-    let cwLiUVindex = document.createElement("li"); // Create li for current weather UV index
+    renderCurrentWeather(Weather);
+    renderForecast(Weather);
 
-    // Set the text for current weather H2 element
-    cwH2.textContent = `${Weather.city} - ${Weather.date}`;
-
-    // Set the icon to the current weather image element
-    cwIcon.src = `${iconUrl}/${Weather.currentIcon}@2x.png`
-
-    cwH2.append(cwIcon);
-
-    // Create text nodes for the li elements
-    cwLiTemp.appendChild(document.createTextNode(`Temperature: ${Weather.currentTemp}` ));
-    cwLiWind.appendChild(document.createTextNode(`Wind: ${Weather.currentWindSpeed}`));
-    cwLiHumidity.appendChild(document.createTextNode(`Humidity: ${Weather.currentHumidity}`));
-    cwLiUVindex.appendChild(document.createTextNode(`UV Index: ${Weather.currentUV}`));
-
-    // Append the li elements to the current weather ul
-    cwUl.appendChild(cwLiTemp);
-    cwUl.appendChild(cwLiWind);
-    cwUl.appendChild(cwLiHumidity);
-    cwUl.appendChild(cwLiUVindex);
-    
-    // Append the the ul element to the current weather section
-    currentWeatherEl.append(cwH2);
-    currentWeatherEl.append(cwUl);
-
-    //Render the forecast for the current city in the #forecast section
 }
 
 // Function to convert unix timestamp to date format
@@ -135,3 +101,88 @@ function unixToDate(unix) {
     return dateFormat;
 }
 
+// Function to render the current weather
+    const renderCurrentWeather = (Weather) => {
+    const cwH2 = document.createElement("h2");
+    const cwIcon = document.createElement("img");
+    const cwUl = document.createElement("ul");
+    const cwLiTemp = document.createElement("li");
+    const cwLiWind = document.createElement("li"); 
+    const cwLiHumidity = document.createElement("li"); 
+    const cwLiUVindex = document.createElement("li"); 
+
+    // Set the text for current weather H2 element
+    cwH2.textContent = `${Weather.city} - ${Weather.date}`;
+
+    // Set the icon to the current weather image element
+    cwIcon.src = `${iconUrl}/${Weather.currentIcon}@2x.png`
+
+    cwH2.append(cwIcon);
+
+    // Create text nodes for the li elements
+    cwLiTemp.appendChild(document.createTextNode(`Temperature: ${Weather.currentTemp}`));
+    cwLiWind.appendChild(document.createTextNode(`Wind: ${Weather.currentWindSpeed}`));
+    cwLiHumidity.appendChild(document.createTextNode(`Humidity: ${Weather.currentHumidity}`));
+    cwLiUVindex.appendChild(document.createTextNode(`UV Index: ${Weather.currentUV}`));
+
+    // Append the li elements to the current weather ul
+    cwUl.appendChild(cwLiTemp);
+    cwUl.appendChild(cwLiWind);
+    cwUl.appendChild(cwLiHumidity);
+    cwUl.appendChild(cwLiUVindex);
+
+    // Append the the ul element to the current weather section
+    currentWeatherEl.append(cwH2);
+    currentWeatherEl.append(cwUl);
+}
+
+// Function to render the forecast weather
+    const renderForecast = (Weather) => {
+    const forecastArr = Weather.forecast;
+    for(i=0; i<forecastArr.length; i++) {
+
+    // Create new elements for the forecast section
+    const cardsEl = document.createElement("section");
+    const dailyForecastEl = document.createElement("section");    
+    let datePel = document.createElement("p");
+    const iconPel = document.createElement("img");
+    const fcUl = document.createElement("ul"); 
+    const fcLiTemp = document.createElement("li"); 
+    const fcLiWind = document.createElement("li"); 
+    const fcLiHumidity = document.createElement("li"); 
+    const fcLiUVindex = document.createElement("li"); 
+
+    // Setting IDs and Classes to new elements
+    cardsEl.setAttribute("id", "cards");
+    dailyForecastEl.setAttribute("class", "daily-forecast");
+
+    // Fill the Date and Icon data
+     datePel = forecastArr[i].date;
+     iconPel.src = `${iconUrl}/${forecastArr[i].icon}@2x.png` ;
+
+    // Create text nodes for the li elements
+    fcLiTemp.appendChild(document.createTextNode(`Temperature: ${forecastArr[i].temperature}`));
+    fcLiWind.appendChild(document.createTextNode(`Wind: ${forecastArr[i].windSpeed}`));
+    fcLiHumidity.appendChild(document.createTextNode(`Humidity: ${forecastArr[i].umidity}`));
+    fcLiUVindex.appendChild(document.createTextNode(`UV Index: ${forecastArr[i].uvi}`));
+
+    // Append the li elements to the current weather ul
+    fcUl.appendChild(fcLiTemp);
+    fcUl.appendChild(fcLiWind);
+    fcUl.appendChild(fcLiHumidity);
+    fcUl.appendChild(fcLiUVindex);
+
+    // Append Weather data elements to daily-forcast section
+    dailyForecastEl.append(datePel);
+    dailyForecastEl.append(iconPel);
+    dailyForecastEl.append(fcUl);
+
+    // Append daily forecast section to cards section
+    cardsEl.append(dailyForecastEl);
+
+    // Append cards section to to forecast section
+    forecastEl.appendChild(cardsEl);
+    }
+
+}
+// TODO: Local storage for city buttons
