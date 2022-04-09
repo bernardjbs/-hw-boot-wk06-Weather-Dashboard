@@ -1,3 +1,8 @@
+ul {
+    list-style: none;
+    padding: 0;
+}
+
 #main-banner {
     background: blue;
     padding: 1em;
@@ -6,6 +11,7 @@
 
 #main-container {
     display: flex;
+    justify-content: center;
 }
 
 #left-container {
@@ -14,6 +20,7 @@
 }
 
 #right-container {
+    flex-grow: 1;
     padding: 1em;
     display: flex;
     flex-direction: column;
@@ -21,17 +28,19 @@
 
 #search-form {
     padding: 1em;
-    border: 1px solid red;
+
 }
 
 #current-weather {
     padding: 1em;
-    border: 1px solid red;
+
 }
 
 #forecast {
+    display: flex;
+    justify-content: center;
     padding: 1em;
-    border: 1px solid red;
+
 }
 
 #search-button {
@@ -39,7 +48,7 @@
 }
 
 #search-histories {
-    border: 1px solid red;
+
     display: flex;
     flex-direction: column;
 }
@@ -48,11 +57,16 @@
     margin: 10px;
 }
 
-#cards {
-    display: flex;
-}
-
 .daily-forecast {
-    border: 1px solid blue;
+    padding: 10px;
+    background-color: blue;
+    color: gold;
 }
 
+.cards {
+    margin: 10px;
+}
+
+.city-button {
+    margin: 10px;
+}
