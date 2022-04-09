@@ -1,12 +1,35 @@
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: #B8D4E3;
+}
+h1 {
+    font-size: 5em;
+}
+h2 {
+    font-size: 1.75em;
+}
+h3 {
+    font-size: 1.5em;
+}
 ul {
     list-style: none;
     padding: 0;
 }
 
+li {
+    padding-bottom: .5em;
+}
 #main-banner {
-    background: blue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #2B4570;
+    color: gold;
     padding: 1em;
     text-align: center;
+    height: 25vh;
+    font-weight: bold;
 }
 
 #main-container {
@@ -20,27 +43,31 @@ ul {
 }
 
 #right-container {
-    flex-grow: 1;
     padding: 1em;
     display: flex;
     flex-direction: column;
 }
 
 #search-form {
+    display: flex;
+    flex-direction: column;
     padding: 1em;
-
+    text-align: center;
 }
 
 #current-weather {
-    padding: 1em;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #2B4570;
+    color: #E3DC95;
+    margin: 1em;
+    border-radius: 10px;
 }
 
 #forecast {
     display: flex;
     justify-content: center;
-    padding: 1em;
-
 }
 
 #search-button {
@@ -48,7 +75,6 @@ ul {
 }
 
 #search-histories {
-
     display: flex;
     flex-direction: column;
 }
@@ -59,8 +85,9 @@ ul {
 
 .daily-forecast {
     padding: 10px;
-    background-color: blue;
-    color: gold;
+    border-radius: 10px;
+    background-color: #2B4570;
+    color: #E3DC95;
 }
 
 .cards {
@@ -70,3 +97,14 @@ ul {
 .city-button {
     margin: 10px;
 }
+
+.btn-primary, .btn-primary:focus {
+    background-color: #2B4570;
+    color: #E3DC95;
+}
+
+.btn-primary:hover {
+    background-color: #E3DC95;
+    color: #2B4570;
+}
+

@@ -1,49 +1,46 @@
+// Constants and Variables
 const searchFormEl = document.querySelector("#search-form");
 const searchHistoriesEl = document.querySelector("#search-histories");
 const searchCityInput = document.querySelector("#search-city-input");
 const currentWeatherEl = document.querySelector("#current-weather");
 const forecastEl = document.querySelector("#forecast");
 const iconUrl = "https://openweathermap.org/img/wn";
-
 const APIkey = "ad132697fb09c0a3d0781a7f1977e112";
 let cityArr = [];
 let defaultCity = "";
 
-searchFormEl.addEventListener('submit', handleSearchFormSubmit);
-
-localStorage_CheckCities();
-
-searchHistoriesEl.addEventListener('click', (event) => {
-    const isButton = event.target.nodeName === 'BUTTON';
+// Event listener for city button click
+searchHistoriesEl.addEventListener("click", (event) => {
+    const isButton = event.target.nodeName === "BUTTON";
     if (!isButton) {
-      return;
+        return;
     }
     searchLocation(event.target.id)
-    .then(Weather => {
-        renderWeather(Weather);
-        renderCurrentWeather(Weather);
-        renderForecast(Weather);
-        
-    });
-    console.dir(event.target.id);
-  })
+        .then(Weather => {
+            renderWeather(Weather);
+            renderCurrentWeather(Weather);
+            renderForecast(Weather);
 
-function localStorage_CheckCities() {
+        });
+})
+
+// Function to check local storage for cities
+const localStorage_CheckCities = () => {
     if (JSON.parse(localStorage.getItem("cities"))) {
         cityArr = JSON.parse(localStorage.getItem("cities"));
         defaultCity = cityArr[0];
-        console.log("default city: " + defaultCity);
         searchLocation(defaultCity)
             .then(Weather => {
                 renderCurrentWeather(Weather);
                 renderForecast(Weather);
                 renderCityButtons(cityArr);
-                defaultCity = "";
             });
+        defaultCity = "";
     }
 }
 
-function handleSearchFormSubmit(event) {
+// Function to handle city input search form submit
+const handleSearchFormSubmit = (event) => {
     event.preventDefault();
 
     if (!searchCityInput.value) {
@@ -56,6 +53,7 @@ function handleSearchFormSubmit(event) {
         });
 }
 
+// Asynchronous function to handle API fetch requests and data
 async function searchLocation(query) {
     const apiUrl_OpenWeather = "http://api.openweathermap.org/data/2.5";
     const forecastArr = [];
@@ -82,9 +80,9 @@ async function searchLocation(query) {
     for (i = 0; i < 5; i++) {
         forecastObj = {
             date: unixToDate(dailyData[i].dt),
-            temperature: dailyData[i].temp.day,
-            windSpeed: dailyData[i].wind_speed,
-            humidity: dailyData[i].humidity,
+            temperature: `${Math.round(dailyData[i].temp.day)}\u00B0C`,
+            windSpeed: `${dailyData[i].wind_speed} mt/s`,
+            humidity: `${dailyData[i].humidity}%`,
             uv: dailyData[i].uvi,
             icon: dailyData[i].weather[0].icon
         }
@@ -95,16 +93,18 @@ async function searchLocation(query) {
         city: jsonWeatherData.name,
         defaultCity: defaultCity,
         date: unixToDate(currentData.dt),
-        currentTemp: currentData.temp,
-        currentWindSpeed: currentData.wind_speed,
-        currentHumidity: currentData.humidity,
+        currentTemp: `${Math.round(currentData.temp)}\u00B0C`,
+        currentWindSpeed: `${currentData.wind_speed} mt/s`,
+        currentHumidity: `${currentData.humidity}%`,
         currentUV: currentData.uvi,
         currentIcon: currentData.weather[0].icon,
         forecast: forecastArr
     }
 }
 
+// Function to render the current weather and forecast for the next five days
 const renderWeather = (Weather) => {
+
     currentWeatherEl.innerHTML = "";
     forecastEl.innerHTML = "";
     if (cityArr.includes(Weather.city) && Weather.defaultCity != "") {
@@ -118,7 +118,6 @@ const renderWeather = (Weather) => {
     cityArr = [... new Set(cityArr)];
     // Save cityArr to localstorage
     localStorage.setItem("cities", JSON.stringify(cityArr));
-
     renderCityButtons(cityArr);
     renderCurrentWeather(Weather);
     renderForecast(Weather);
@@ -127,20 +126,21 @@ const renderWeather = (Weather) => {
 
 // Function to convert unix timestamp to date format
 const unixToDate = (unix) => {
+    const months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "DecC"];
     const unixDate = unix;
     const milliSecs = new Date(unixDate * 1000);
     let day = milliSecs.getDate();
-    let month = milliSecs.getMonth() + 1;
+    let month = months[milliSecs.getMonth()];
     const year = milliSecs.getFullYear();
     if (day < 10) day = `0${day}`;
     if (month < 10) month = `0${month}`;
-    const dateFormat = `${day}/${month}/${year}`;
+    const dateFormat = `${day} ${month} ${year}`;
     return dateFormat;
 }
 
 // Function to render the current weather
 const renderCurrentWeather = (Weather) => {
-    while(currentWeatherEl.firstChild) {
+    while (currentWeatherEl.firstChild) {
         currentWeatherEl.removeChild(currentWeatherEl.firstChild);
     }
     const cwH2 = document.createElement("h2");
@@ -178,7 +178,7 @@ const renderCurrentWeather = (Weather) => {
 
 // Function to render the forecast weather
 const renderForecast = (Weather) => {
-    while(forecastEl.firstChild) {
+    while (forecastEl.firstChild) {
         forecastEl.removeChild(forecastEl.firstChild);
     }
     const forecastArr = Weather.forecast;
@@ -206,8 +206,8 @@ const renderForecast = (Weather) => {
         // Create text nodes for the li elements
         fcLiTemp.appendChild(document.createTextNode(`Temperature: ${forecastArr[i].temperature}`));
         fcLiWind.appendChild(document.createTextNode(`Wind: ${forecastArr[i].windSpeed}`));
-        fcLiHumidity.appendChild(document.createTextNode(`Humidity: ${forecastArr[i].umidity}`));
-        fcLiUVindex.appendChild(document.createTextNode(`UV Index: ${forecastArr[i].uvi}`));
+        fcLiHumidity.appendChild(document.createTextNode(`Humidity: ${forecastArr[i].humidity}`));
+        fcLiUVindex.appendChild(document.createTextNode(`UV Index: ${forecastArr[i].uv}`));
 
         // Append the li elements to the current weather ul
         fcUl.appendChild(fcLiTemp);
@@ -228,9 +228,9 @@ const renderForecast = (Weather) => {
     }
 }
 
-// Function to render 
+// Function to render city buttons
 const renderCityButtons = (cityArr) => {
-    while(searchHistoriesEl.firstChild) {
+    while (searchHistoriesEl.firstChild) {
         searchHistoriesEl.removeChild(searchHistoriesEl.firstChild);
     }
     cityArr.forEach(city => {
@@ -239,6 +239,9 @@ const renderCityButtons = (cityArr) => {
         cityButton.setAttribute("id", city);
         cityButton.textContent = city;
         searchHistoriesEl.append(cityButton)
-        console.log(`city: ${city}`);
     });
 }
+
+// Main Functions
+localStorage_CheckCities();
+searchFormEl.addEventListener("submit", handleSearchFormSubmit);
