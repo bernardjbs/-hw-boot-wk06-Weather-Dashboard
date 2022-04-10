@@ -4,10 +4,20 @@ const searchHistoriesEl = document.querySelector("#search-histories");
 const searchCityInput = document.querySelector("#search-city-input");
 const currentWeatherEl = document.querySelector("#current-weather");
 const forecastEl = document.querySelector("#forecast");
+const weatherImgEl = document.querySelector("#weather-image");
+const searchButtonEl = document.querySelector("#search-button");
+const h1El = document.querySelector("h1");
+const resetButtonEl = document.querySelector("#reset-button");
+
 const iconUrl = "https://openweathermap.org/img/wn";
 const APIkey = "ad132697fb09c0a3d0781a7f1977e112";
 let cityArr = [];
 let defaultCity = "";
+
+// Event listener for reset button click
+resetButtonEl.addEventListener("click", () =>  {
+    resetWeather()
+})
 
 // Event listener for city button click
 searchHistoriesEl.addEventListener("click", (event) => {
@@ -20,22 +30,27 @@ searchHistoriesEl.addEventListener("click", (event) => {
             renderWeather(Weather);
             renderCurrentWeather(Weather);
             renderForecast(Weather);
-
+            checkDayOrNight(Weather, "");
         });
 })
 
 // Function to check local storage for cities
 const localStorage_CheckCities = () => {
     if (JSON.parse(localStorage.getItem("cities"))) {
+
         cityArr = JSON.parse(localStorage.getItem("cities"));
         defaultCity = cityArr[0];
         searchLocation(defaultCity)
             .then(Weather => {
                 renderCurrentWeather(Weather);
                 renderForecast(Weather);
-                renderCityButtons(cityArr);
+                renderCityButtons(Weather, cityArr);
+                checkDayOrNight(Weather, currentWeatherEl);
+                checkDayOrNight(Weather, "");
+                checkDayOrNight(Weather, searchButtonEl)
             });
         defaultCity = "";
+        resetButtonEl.classList.remove("hidden");
     }
 }
 
@@ -76,6 +91,7 @@ async function searchLocation(query) {
     const currentData = jsonOnecallData.current;
     const dailyData = jsonOnecallData.daily;
 
+    console.log(jsonOnecallData);
     // Fill array of forecast objects
     for (i = 0; i < 5; i++) {
         forecastObj = {
@@ -88,11 +104,15 @@ async function searchLocation(query) {
         }
         forecastArr.push(forecastObj);
     }
+
     // Fill and return the Weather object
     return {
         city: jsonWeatherData.name,
         defaultCity: defaultCity,
+        unixDate: currentData.dt,
         date: unixToDate(currentData.dt),
+        sunrise: currentData.sunrise,
+        sunset: currentData.sunset,
         currentTemp: `${Math.round(currentData.temp)}\u00B0C`,
         currentWindSpeed: `${currentData.wind_speed} mt/s`,
         currentHumidity: `${currentData.humidity}%`,
@@ -104,7 +124,6 @@ async function searchLocation(query) {
 
 // Function to render the current weather and forecast for the next five days
 const renderWeather = (Weather) => {
-
     currentWeatherEl.innerHTML = "";
     forecastEl.innerHTML = "";
     if (cityArr.includes(Weather.city) && Weather.defaultCity != "") {
@@ -118,17 +137,15 @@ const renderWeather = (Weather) => {
     cityArr = [... new Set(cityArr)];
     // Save cityArr to localstorage
     localStorage.setItem("cities", JSON.stringify(cityArr));
-    renderCityButtons(cityArr);
+    renderCityButtons(Weather, cityArr);
     renderCurrentWeather(Weather);
     renderForecast(Weather);
-
 }
 
 // Function to convert unix timestamp to date format
 const unixToDate = (unix) => {
-    const months = ["Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "DecC"];
-    const unixDate = unix;
-    const milliSecs = new Date(unixDate * 1000);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "DecC"];
+    const milliSecs = new Date(unix * 1000);
     let day = milliSecs.getDate();
     let month = months[milliSecs.getMonth()];
     const year = milliSecs.getFullYear();
@@ -140,6 +157,7 @@ const unixToDate = (unix) => {
 
 // Function to render the current weather
 const renderCurrentWeather = (Weather) => {
+
     while (currentWeatherEl.firstChild) {
         currentWeatherEl.removeChild(currentWeatherEl.firstChild);
     }
@@ -174,6 +192,9 @@ const renderCurrentWeather = (Weather) => {
     // Append the the ul element to the current weather section
     currentWeatherEl.append(cwH2);
     currentWeatherEl.append(cwUl);
+
+    checkDayOrNight(Weather, cwH2);
+    checkDayOrNight(Weather, cwUl);
 }
 
 // Function to render the forecast weather
@@ -181,11 +202,21 @@ const renderForecast = (Weather) => {
     while (forecastEl.firstChild) {
         forecastEl.removeChild(forecastEl.firstChild);
     }
+    const forecastH3el = document.createElement("h3");
+    forecastH3el.setAttribute("id", "forecast-h3");
+    forecastH3el.textContent = `5 Days forecast for ${Weather.city}`
+
+
+    const cardsSectionEl = document.createElement("section");
+    cardsSectionEl.setAttribute("id", "cards");
+    forecastEl.append(forecastH3el);
+    forecastEl.append(cardsSectionEl);
+
     const forecastArr = Weather.forecast;
     for (i = 0; i < forecastArr.length; i++) {
 
         // Create new elements for the forecast section
-        const cardsEl = document.createElement("section");
+        const weatherCardEl = document.createElement("section");
         const dailyForecastEl = document.createElement("section");
         let datePel = document.createElement("p");
         const iconPel = document.createElement("img");
@@ -196,10 +227,10 @@ const renderForecast = (Weather) => {
         const fcLiUVindex = document.createElement("li");
 
         // Setting IDs and Classes to new elements
-        cardsEl.setAttribute("class", "cards");
+        weatherCardEl.setAttribute("class", "WeatherCard");
         dailyForecastEl.setAttribute("class", "daily-forecast");
 
-        // Fill the Date and Icon data
+        // Fill the elements with data
         datePel = forecastArr[i].date;
         iconPel.src = `${iconUrl}/${forecastArr[i].icon}@2x.png`;
 
@@ -221,17 +252,23 @@ const renderForecast = (Weather) => {
         dailyForecastEl.append(fcUl);
 
         // Append daily forecast section to cards section
-        cardsEl.append(dailyForecastEl);
+        weatherCardEl.append(dailyForecastEl);
 
         // Append cards section to to forecast section
-        forecastEl.appendChild(cardsEl);
-    }
-}
+        // forecastEl.appendChild(cardsEl);
+        cardsSectionEl.append(weatherCardEl);
 
+        checkDayOrNight(Weather, dailyForecastEl);
+    }
+
+}
 // Function to render city buttons
-const renderCityButtons = (cityArr) => {
+const renderCityButtons = (Weather, cityArr) => {
     while (searchHistoriesEl.firstChild) {
         searchHistoriesEl.removeChild(searchHistoriesEl.firstChild);
+    }
+    if (cityArr.length > 0) {
+        resetButtonEl.classList.remove("hidden");
     }
     cityArr.forEach(city => {
         const cityButton = document.createElement("Button");
@@ -239,9 +276,61 @@ const renderCityButtons = (cityArr) => {
         cityButton.setAttribute("id", city);
         cityButton.textContent = city;
         searchHistoriesEl.append(cityButton)
+        checkDayOrNight(Weather, cityButton)
     });
 }
 
+// Function to check if current time is daytime or night time based on sunrise and sunset
+const checkDayOrNight = (Weather, element) => {
+    //  let now = new Date(2022, 3, 11, 5, 00, 00, 00);
+    let cityCurrentDate = Weather.unixDate;
+
+    const sunrise = Weather.sunrise;
+    const sunset = Weather.sunset;
+
+    console.log("now: " + cityCurrentDate);
+    console.log("sunrise: " + sunrise);
+    console.log("sunset: " + sunset);
+
+    if (element != "") {
+        if (sunrise < cityCurrentDate && cityCurrentDate < sunset) {
+            if (element.tagName === "BUTTON") {
+                element.classList.add("day-button");
+            }
+            else {
+                element.classList.add("day");
+            }
+            weatherImgEl.src.src = "./assets/images/weather_day.jpg";
+            h1El.classList.add("h1Day");
+            h1El.classList.remove("h1Night");
+        }
+        else {
+            if (element.tagName === "BUTTON") {
+                element.classList.add("night-button");
+            }
+            else {
+                element.classList.add("night");
+            }
+            weatherImgEl.src = "./assets/images/weather_night.png";
+            h1El.classList.add("h1Night");
+            h1El.classList.remove("h1Day");
+        }
+    }
+}
+
+// const listenReset = () => {
+//     if (window.getComputedStyle(resetButtonEl).display != "none") {
+//         resetButtonEl.addEventListener("click", resetWeather())
+//     }
+// }
+
+const resetWeather = (event) => {
+    location.reload()
+    localStorage.removeItem("cities");
+    console.log("i am here");
+}
 // Main Functions
 localStorage_CheckCities();
 searchFormEl.addEventListener("submit", handleSearchFormSubmit);
+
+// 

@@ -1,17 +1,31 @@
+/***** VARIABLES *****/
+:root {
+    --bgBlue: #2B4570;
+    --lightGray: #B8D4E3;
+    --gold: gold;
+    --yellowLight: #E3DC95;
+}
+
+/***** HTML SELECTORS *****/
 body {
     display: flex;
     flex-direction: column;
-    background-color: #B8D4E3;
+    background-color: var(--lightGray);
+    color: #454741;
 }
+
 h1 {
     font-size: 5em;
 }
+
 h2 {
-    font-size: 1.75em;
+    font-size: 2em;
 }
+
 h3 {
     font-size: 1.5em;
 }
+
 ul {
     list-style: none;
     padding: 0;
@@ -20,12 +34,20 @@ ul {
 li {
     padding-bottom: .5em;
 }
+
+/***** IDs *****/
+#weather-image {
+    width: 100px;
+    border-radius: 10px;
+    margin-right: 50px;
+}
+
 #main-banner {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #2B4570;
-    color: gold;
+    background: var(--bgBlue);
+    color: var(--gold);
     padding: 1em;
     text-align: center;
     height: 25vh;
@@ -59,26 +81,37 @@ li {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #2B4570;
-    color: #E3DC95;
+    background-color: var(--bgBlue);
+    color: var(--yellowLight);
     margin: 1em;
     border-radius: 10px;
 }
 
 #forecast {
     display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
-#search-button {
+#search-button, #reset-button {
     margin-top: 1em;
 }
+
 
 #search-histories {
     display: flex;
     flex-direction: column;
 }
 
+#cards {
+    display: flex;
+}
+
+#forecast-h3 {
+    margin-left: 15px;
+}
+
+/***** CLASSES *****/
 .cityHistoryBtn {
     margin: 10px;
 }
@@ -86,11 +119,11 @@ li {
 .daily-forecast {
     padding: 10px;
     border-radius: 10px;
-    background-color: #2B4570;
-    color: #E3DC95;
+    background-color: var(--bgBlue);
+    color: var(--yellowLight);
 }
 
-.cards {
+.WeatherCard {
     margin: 10px;
 }
 
@@ -98,13 +131,126 @@ li {
     margin: 10px;
 }
 
-.btn-primary, .btn-primary:focus {
-    background-color: #2B4570;
-    color: #E3DC95;
+.btn-danger {
+    background-color: #D65780;
 }
 
-.btn-primary:hover {
-    background-color: #E3DC95;
-    color: #2B4570;
+.btn-primary,
+.btn-primary:focus,
+.day-button,
+.day-button:focus {
+    background-color: var(--bgBlue);
+    color: var(--yellowLight);
 }
 
+.btn-primary:hover,
+.day-button:hover {
+    background-color: var(--yellowLight);
+    color: var(--bgBlue);
+}
+
+.night,
+.night-button {
+    color: var(--lightGray);
+}
+
+.day {
+    color: var(--yellowLight);
+}
+
+.night-button:focus {
+    background-color: var(--bgBlue);
+    color: var(--yellowLight);
+}
+
+.night-button:hover {
+    background-color: var(--lightGray);
+    color: var(--bgBlue);
+}
+
+.h1Night {
+    color: #1f1f1f;
+}
+
+.h1Day {
+    color: var(--gold);
+}
+
+.hidden {
+    display: none;
+}
+
+button.visible {
+    visibility: visible;
+}
+/***** MEDIA QUERIES FOR RESPONSIVE LAYOUT *****/
+/* When screen is 1100px or less */
+@media screen and (max-width: 1100px) {
+    #main-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    #left-container {
+        width: 75vw;
+    }
+    h2 {
+        font-size: 1.5em;
+    }
+}
+
+/* When screen is 900px or less */
+@media screen and (max-width: 900px) {
+
+
+    #current-weather {
+        width: 70vw;
+    }
+    #cards {
+        flex-direction: column;
+        width: 40vw;
+    }
+    #forecast {
+        align-items: center;
+    }
+    #WeatherCard {
+        min-width: 250px;
+    }
+    h1 {
+        font-size: 3em;
+    }
+    #weather-image {
+        margin-right: 25px;
+        width: 75px;
+    }
+}
+
+/* When screen is 600px or less */
+@media screen and (max-width: 600px) {
+    h1 {
+        font-size: 2.5em;
+    }
+    #weather-image {
+        margin-right: 10px;
+        width: 75px;
+    }
+}
+
+/* When screen is 440px or less */
+@media screen and (max-width: 440px) {
+    #cards {
+        width: 60vw;
+    }
+}
+
+/* When screen is 350px or less */
+@media screen and (max-width: 350px) {
+    h1 {
+        font-size: 2em;
+    }
+    #cards {
+        width: 70vw;
+    }
+    h2{
+        margin: 10px;
+    }
+}
