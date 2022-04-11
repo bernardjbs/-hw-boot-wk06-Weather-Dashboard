@@ -84,7 +84,7 @@ li {
 }
 #search-button,
 #reset-button {
-    margin-top: 1em;
+    margin: 10px;
 }
 #search-histories {
     display: flex;

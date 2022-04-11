@@ -276,9 +276,13 @@ const renderForecast = (Weather) => {
 }
 // Function to render city buttons
 const renderCityButtons = (Weather, cityArr) => {
-    while (searchHistoriesEl.firstChild) {
-        searchHistoriesEl.removeChild(searchHistoriesEl.firstChild);
-    }
+    const cities = document.querySelectorAll(".city-button")
+    cities.forEach(city => {
+        city.remove();
+    })
+    // while (searchHistoriesEl.firstChild) {
+    //     searchHistoriesEl.removeChild(searchHistoriesEl.firstChild);
+    // }
     if (cityArr.length > 0) {
         resetButtonEl.classList.remove("hidden");
     }
@@ -329,19 +333,10 @@ const checkDayOrNight = (Weather, element) => {
     }
 }
 
-// const listenReset = () => {
-//     if (window.getComputedStyle(resetButtonEl).display != "none") {
-//         resetButtonEl.addEventListener("click", resetWeather())
-//     }
-// }
-
-const resetWeather = (event) => {
+const resetWeather = () => {
     location.reload()
     localStorage.removeItem("cities");
-    console.log("i am here");
 }
 // Main Functions
 localStorage_CheckCities();
 searchFormEl.addEventListener("submit", handleSearchFormSubmit);
-
-// 
