@@ -89,8 +89,6 @@ async function searchLocation(query) {
         lon = jsonWeatherData.coord.lon;
     }
 
-
-
     // Get json onecall data from OPENWEATHERMAP API
     const requestUrl_Onecall = `${apiUrl_OpenWeather}/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`;
     const response_Onecall = await fetch(requestUrl_Onecall);
@@ -99,7 +97,6 @@ async function searchLocation(query) {
     const currentData = jsonOnecallData.current;
     const dailyData = jsonOnecallData.daily;
 
-    console.log(jsonOnecallData);
     // Fill array of forecast objects
     for (i = 0; i < 5; i++) {
         forecastObj = {
@@ -280,9 +277,6 @@ const renderCityButtons = (Weather, cityArr) => {
     cities.forEach(city => {
         city.remove();
     })
-    // while (searchHistoriesEl.firstChild) {
-    //     searchHistoriesEl.removeChild(searchHistoriesEl.firstChild);
-    // }
     if (cityArr.length > 0) {
         resetButtonEl.classList.remove("hidden");
     }
@@ -299,14 +293,8 @@ const renderCityButtons = (Weather, cityArr) => {
 // Function to check if current time is daytime or night time based on sunrise and sunset
 const checkDayOrNight = (Weather, element) => {
     let cityCurrentDate = Weather.unixDate;
-
     const sunrise = Weather.sunrise;
     const sunset = Weather.sunset;
-
-    console.log("now: " + cityCurrentDate);
-    console.log("sunrise: " + sunrise);
-    console.log("sunset: " + sunset);
-
     if (element != "") {
         if (sunrise < cityCurrentDate && cityCurrentDate < sunset) {
             if (element.tagName === "BUTTON") {
@@ -333,6 +321,7 @@ const checkDayOrNight = (Weather, element) => {
     }
 }
 
+// Function to reload web page and clear the local storage
 const resetWeather = () => {
     location.reload()
     localStorage.removeItem("cities");
