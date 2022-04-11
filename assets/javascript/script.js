@@ -70,7 +70,7 @@ const handleSearchFormSubmit = (event) => {
 
 // Asynchronous function to handle API fetch requests and data
 async function searchLocation(query) {
-    const apiUrl_OpenWeather = "http://api.openweathermap.org/data/2.5";
+    const apiUrl_OpenWeather = "https://api.openweathermap.org/data/2.5";
     const forecastArr = [];
     let forecastObj = {};
     let lat = "";
