@@ -59,7 +59,7 @@ const handleSearchFormSubmit = (event) => {
     event.preventDefault();
 
     if (!searchCityInput.value) {
-        console.error("you need a search input value");
+        window.alert("you need a search input value");
         return;
     }
     searchLocation(searchCityInput.value)
@@ -73,15 +73,23 @@ async function searchLocation(query) {
     const apiUrl_OpenWeather = "http://api.openweathermap.org/data/2.5";
     const forecastArr = [];
     let forecastObj = {};
-
+    let lat = "";
+    let lon = "";
+    let jsonWeatherData = "";
     // Get json weather data from OPENWEATHERMAP API
     const requestUrl_Weather = `${apiUrl_OpenWeather}/weather?q=${query}&appid=${APIkey}&units=metric`;
     const response_Weather = await fetch(requestUrl_Weather);
-    const jsonWeatherData = await response_Weather.json();
+    if (response_Weather.status !== 200) {
+        window.alert(`Error! "${query}" cannot be found. Please enter a valid city`);
+    }
+    else {
+        jsonWeatherData = await response_Weather.json();
+        // Get the coordinates from the weather data
+        lat = jsonWeatherData.coord.lat;
+        lon = jsonWeatherData.coord.lon;
+    }
 
-    // Get the coordinates from the weather data
-    const lat = jsonWeatherData.coord.lat;
-    const lon = jsonWeatherData.coord.lon;
+
 
     // Get json onecall data from OPENWEATHERMAP API
     const requestUrl_Onecall = `${apiUrl_OpenWeather}/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${APIkey}`;
