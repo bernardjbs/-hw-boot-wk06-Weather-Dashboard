@@ -118,7 +118,8 @@ async function searchLocation(query) {
         currentHumidity: `${currentData.humidity}%`,
         currentUV: currentData.uvi,
         currentIcon: currentData.weather[0].icon,
-        forecast: forecastArr
+        forecast: forecastArr,
+        timezone: jsonOnecallData.timezone
     }
 }
 
@@ -164,12 +165,13 @@ const renderCurrentWeather = (Weather) => {
     const cwH2 = document.createElement("h2");
     const cwIcon = document.createElement("img");
     const cwUl = document.createElement("ul");
+    const cwTimezone = document.createElement("li");
     const cwLiTemp = document.createElement("li");
     const cwLiWind = document.createElement("li");
     const cwLiHumidity = document.createElement("li");
     const cwLiUVindex = document.createElement("li");
 
-    // Set the text for current weather H2 element
+    // Set the text for current weather H2 and H3 element
     cwH2.textContent = `${Weather.city} - ${Weather.date}`;
 
     // Set the icon to the current weather image element
@@ -178,12 +180,14 @@ const renderCurrentWeather = (Weather) => {
     cwH2.append(cwIcon);
 
     // Create text nodes for the li elements
+    cwTimezone.appendChild(document.createTextNode(`Timezone: ${Weather.timezone}`));
     cwLiTemp.appendChild(document.createTextNode(`Temperature: ${Weather.currentTemp}`));
     cwLiWind.appendChild(document.createTextNode(`Wind: ${Weather.currentWindSpeed}`));
     cwLiHumidity.appendChild(document.createTextNode(`Humidity: ${Weather.currentHumidity}`));
     cwLiUVindex.appendChild(document.createTextNode(`UV Index: ${Weather.currentUV}`));
 
     // Append the li elements to the current weather ul
+    cwUl.appendChild(cwTimezone);
     cwUl.appendChild(cwLiTemp);
     cwUl.appendChild(cwLiWind);
     cwUl.appendChild(cwLiHumidity);
@@ -282,7 +286,6 @@ const renderCityButtons = (Weather, cityArr) => {
 
 // Function to check if current time is daytime or night time based on sunrise and sunset
 const checkDayOrNight = (Weather, element) => {
-    //  let now = new Date(2022, 3, 11, 5, 00, 00, 00);
     let cityCurrentDate = Weather.unixDate;
 
     const sunrise = Weather.sunrise;
@@ -300,7 +303,7 @@ const checkDayOrNight = (Weather, element) => {
             else {
                 element.classList.add("day");
             }
-            weatherImgEl.src.src = "./assets/images/weather_day.jpg";
+            weatherImgEl.src = "./assets/images/weather_day.jpg";
             h1El.classList.add("h1Day");
             h1El.classList.remove("h1Night");
         }
